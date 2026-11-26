@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talerz pod lupą</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Caveat:wght@600;700&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Plan: kartka z zeszytu w kratkę, zielony długopis jako akcent. Kolory składników pokarmowych
+   takie same jak w prezentacji. Jeden motyw (jasny), z wyboru. */
+:root{
+  --paper:#fbfcfa; --grid:#e3eae1; --ink:#18261d; --muted:#56655a; --pen:#1f7a4a; --pen-soft:#e3f2e8;
+  --marker:#ffe65a; --red:#c8453b; --ok:#1b7a45; --ok-soft:#e2f3e8; --bad-soft:#fbe6e4; --card:#ffffff; --line:#cfdccf;
+  --bialka:#c8453b; --cukry:#d38f00; --tluszcze:#7a5cc2; --witaminy:#2f8f4e; --sole:#4a6fa5; --woda:#1f97cc; --blonnik:#8a6a3f;
+  --display:"Bricolage Grotesque","Trebuchet MS",Arial,sans-serif;
+  --body:"Lexend","Segoe UI",system-ui,-apple-system,sans-serif;
+  --hand:"Caveat","Bradley Hand","Comic Sans MS",cursive;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px}
+h1,h2,h3{font-family:var(--display);line-height:1.1;text-wrap:balance;margin:0}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding:20px 18px 140px}
+.top{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+.brand small{display:block;font-size:14px;color:var(--muted);letter-spacing:.02em}
+.brand h1{font-size:clamp(30px,5vw,46px);font-weight:800;letter-spacing:-.02em}
+.topr{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.rank{font-family:var(--hand);font-size:24px;color:var(--pen)}
+.deck-link{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--ink);border-radius:8px;padding:6px 12px;text-decoration:none;color:var(--ink);font-weight:600;background:var(--card)}
+
+.table{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:6px 0 22px}
+.el{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:84px;padding:6px 10px;border:2px solid var(--ink);border-radius:6px;background:var(--card);text-decoration:none;color:var(--ink)}
+.el .nr{font-size:12px}
+.el .sy{font-family:var(--display);font-weight:800;font-size:28px;line-height:1}
+.el .nm{font-size:12px;line-height:1.2;color:var(--muted)}
+.el[aria-current="page"]{background:var(--pen);border-color:var(--pen);color:#fff}
+.el[aria-current="page"] .nm{color:#d8eedf}
+.el .stamp{position:absolute;top:4px;right:6px;width:22px;height:22px;border-radius:50%;border:2px solid var(--red);color:var(--red);font-size:13px;font-weight:600;display:none;align-items:center;justify-content:center;transform:rotate(-12deg);background:#fff}
+.el.done .stamp{display:flex}
+.strip{display:flex;height:6px;border-radius:3px;overflow:hidden;margin:-12px 0 20px}
+.strip i{flex:1}
+
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 1px 0 var(--line),0 10px 30px -18px rgba(24,38,29,.35);padding:26px 26px 30px 56px;position:relative}
+.sheet::before{content:"";position:absolute;top:0;bottom:0;left:36px;width:2px;background:#f2b8b3}
+@media (max-width:640px){.sheet{padding:20px 16px 24px 30px}.sheet::before{left:16px}}
+.lesson-head .eyebrow{font-size:14px;color:var(--muted)}
+.lesson-head h2{font-size:clamp(28px,4.4vw,42px);font-weight:800;margin:4px 0 6px}
+.hl{background:linear-gradient(transparent 58%,var(--marker) 58%,var(--marker) 92%,transparent 92%);padding:0 .08em}
+.slides-link{font-size:15px;color:var(--pen);font-weight:500}
+.plan{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 6px}
+.plan button{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:5px 12px;font-size:14px;cursor:pointer;min-height:36px}
+.plan button b{color:var(--pen)}
+.plan-hint{font-size:13px;color:var(--muted);margin:0}
+section.blk{margin-top:30px}
+section.blk>h3{font-size:24px;font-weight:800;display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+section.blk>h3 .k{font-family:var(--body);font-size:13px;font-weight:500;color:#fff;background:var(--ink);border-radius:4px;padding:2px 7px;transform:translateY(-3px)}
+.tray{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 18px;padding:0;margin:0;list-style:none}
+.tray label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:6px 0;border-bottom:1px dashed var(--line)}
+.tray input{width:22px;height:22px;accent-color:var(--pen);flex:none;margin-top:2px}
+.tray input:checked+span{text-decoration:line-through;color:var(--muted)}
+.riddle{border:2px solid var(--ink);border-radius:10px;padding:18px 20px;background:var(--pen-soft)}
+.riddle .q{font-family:var(--hand);font-size:clamp(26px,3.6vw,34px);line-height:1.15;margin:0 0 12px}
+.answer{margin-top:12px;padding:12px 14px;border-left:4px solid var(--pen);background:var(--card);border-radius:0 8px 8px 0}
+.exps{display:grid;gap:14px}
+.exp{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+@media (max-width:560px){.exp{grid-template-columns:1fr}.exp .pic{max-width:180px}}
+.exp .pic{background:var(--paper);border-radius:8px;border:1px solid var(--line);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+.exp .pic svg{width:100%;height:100%}
+.exp h4{font-family:var(--display);font-size:20px;margin:0 0 4px}
+.who{display:inline-block;font-size:12px;font-weight:600;border-radius:4px;padding:2px 8px;margin-bottom:6px}
+.who.ty{background:var(--ok-soft);color:var(--ok)}
+.who.pokaz{background:#fff2c4;color:#7a5600}
+.exp ol{margin:6px 0 10px;padding-left:20px}
+.ask{font-weight:600;margin:6px 0}
+.btn{border:2px solid var(--pen);background:var(--pen);color:#fff;border-radius:8px;padding:9px 16px;font-weight:600;cursor:pointer;min-height:44px;text-decoration:none;display:inline-flex;align-items:center}
+.btn.ghost{background:transparent;color:var(--pen)}
+.btn.small{padding:6px 12px;min-height:38px;font-size:15px}
+.btn:active{transform:translateY(1px)}
+.ex{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:var(--card)}
+.ex+.ex{margin-top:14px}
+.ex h4{font-family:var(--display);font-size:20px;margin:0 0 4px}
+.ex .sub{color:var(--muted);margin:0 0 12px;font-size:15px;max-width:65ch}
+.ex-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.score{font-family:var(--hand);font-size:28px;color:var(--pen)}
+fieldset.q{border:0;border-bottom:1px solid var(--grid);margin:0;padding:10px 0}
+fieldset.q legend{padding:0;font-weight:500}
+.qn{color:var(--muted);margin-right:4px}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.opt{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;min-height:44px;background:var(--paper)}
+.opt input{width:20px;height:20px;accent-color:var(--pen);margin:0}
+.opt:has(input:checked){border-color:var(--pen);background:var(--pen-soft)}
+.q.ok .opt:has(input:checked){border-color:var(--ok);background:var(--ok-soft)}
+.q.bad .opt:has(input:checked){border-color:var(--red);background:var(--bad-soft)}
+.opt.missed{border-style:dashed;border-color:var(--ok)}
+.q.empty legend::after{content:"  ← bez odpowiedzi";color:var(--red);font-size:14px}
+.why{margin:8px 0 0;font-size:15px;color:var(--muted)}
+.rows{display:grid;gap:8px}
+.row{display:grid;grid-template-columns:1fr minmax(200px,280px);gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--grid)}
+@media (max-width:560px){.row{grid-template-columns:1fr}}
+select,input[type=text]{border:1.5px solid var(--line);border-radius:8px;padding:9px 10px;background:var(--paper);min-height:44px;width:100%}
+select.ok,input.ok{border-color:var(--ok);background:var(--ok-soft)}
+select.bad,input.bad{border-color:var(--red);background:var(--bad-soft)}
+.pool{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px dashed var(--line);border-radius:10px;min-height:60px;margin-bottom:12px}
+.pool:empty::before{content:"Wszystko posortowane. Sprawdź odpowiedzi.";color:var(--muted);font-size:15px}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.bin{border:2px solid var(--ink);border-radius:10px;padding:10px;min-height:120px;background:var(--paper);border-top-width:8px}
+.bin h5{margin:0 0 8px;font-family:var(--display);font-size:17px}
+.bin .items{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;flex-direction:column;gap:6px;border:1.5px solid var(--line);border-radius:8px;padding:7px 10px;background:var(--card)}
+.chip .t{font-weight:500}
+.chip .to{display:flex;flex-wrap:wrap;gap:4px}
+.chip .to button{border:1.5px solid var(--pen);color:var(--pen);background:#fff;border-radius:6px;font-size:13px;padding:4px 8px;cursor:pointer;min-height:34px}
+.bin .chip{flex-direction:row;align-items:center}
+.bin .chip button.back{border:0;background:none;color:var(--muted);cursor:pointer;font-size:15px;min-height:30px;padding:0 4px}
+.chip.ok{border-color:var(--ok);background:var(--ok-soft)}
+.chip.bad{border-color:var(--red);background:var(--bad-soft)}
+.mem{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:620px}
+.card{aspect-ratio:1/1;border:2px solid var(--ink);border-radius:8px;background:var(--pen);color:#fff;font-family:var(--display);font-weight:800;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;padding:4px;line-height:1.1}
+.card.up{background:var(--card);color:var(--ink)}
+.card.found{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);cursor:default}
+.takeaway{border:2px solid var(--ink);border-radius:10px;padding:16px 18px;background:#fffbea}
+.takeaway p.cloze{font-size:19px;line-height:2.1;margin:0;max-width:65ch}
+.cloze input{display:inline-block;width:auto;min-width:5ch;padding:2px 8px;min-height:36px;font-size:17px;border-width:0 0 2px;border-radius:0;background:transparent;border-color:var(--pen)}
+.cloze input.ok{background:var(--ok-soft);border-color:var(--ok)}
+.cloze input.bad{background:var(--bad-soft);border-color:var(--red)}
+.finish{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-top:30px;padding-top:18px;border-top:2px dashed var(--line)}
+.finish .btn.stamped{background:var(--ok);border-color:var(--ok)}
+.locks{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.lock{border:2px solid var(--ink);border-radius:10px;padding:14px;background:var(--card);display:flex;flex-direction:column;gap:10px}
+.lock h4{font-family:var(--display);font-size:18px;margin:0;display:flex;justify-content:space-between;align-items:center}
+.lock .pad{display:flex;gap:8px}
+.lock input{width:70px;text-align:center;font-size:22px;font-weight:600}
+.lock.open{border-color:var(--ok);background:var(--ok-soft)}
+.lock .digit{font-family:var(--display);font-weight:800;font-size:40px;color:var(--ok);line-height:1}
+.lock .state{font-size:22px}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
+.safe{margin-top:16px;border:3px solid var(--ink);border-radius:12px;padding:18px;background:var(--pen-soft);display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.safe input{max-width:180px;font-size:26px;letter-spacing:.3em;text-align:center}
+.diploma{margin-top:16px;border:6px double var(--pen);border-radius:12px;padding:28px 22px;text-align:center;background:var(--card)}
+.diploma .t1{font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.diploma h3{font-size:clamp(28px,5vw,44px);font-weight:800;margin:8px 0}
+.diploma .name{font-family:var(--hand);font-size:42px;color:var(--pen);border-bottom:2px solid var(--line);display:inline-block;min-width:60%;padding:0 10px}
+.diploma .nameinp{max-width:320px;margin:10px auto 0}
+.mind{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.mind .box{border-radius:10px;padding:14px;color:#fff}
+.mind .box h5{font-family:var(--display);font-size:18px;margin:0 0 6px}
+.mind ul{margin:0;padding-left:18px;font-size:15px}
+.mind .rule{grid-column:1/-1;background:var(--paper);border:2px solid var(--ink);border-radius:10px;padding:14px}
+.timer{position:fixed;right:14px;bottom:14px;z-index:20;background:var(--ink);color:#fff;border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);max-width:calc(100% - 28px);flex-wrap:wrap}
+.timer .lbl{font-size:12px;color:#b9cdbf;display:block}
+.timer .time{font-family:var(--display);font-weight:800;font-size:30px;font-variant-numeric:tabular-nums;line-height:1}
+.timer button{border:1.5px solid #4c6253;background:transparent;color:#fff;border-radius:8px;min-height:40px;min-width:44px;padding:4px 10px;cursor:pointer;font-size:14px}
+.timer button.go{background:var(--marker);border-color:var(--marker);color:var(--ink);font-weight:600}
+.timer.end{background:var(--marker);color:var(--ink)}
+.timer.end .lbl{color:var(--ink)}
+.timer.end button{color:var(--ink);border-color:var(--ink)}
+@media (prefers-reduced-motion:no-preference){.timer.end{animation:pulse 1s ease-in-out infinite alternate}}
+@keyframes pulse{to{transform:scale(1.05)}}
+@media (prefers-reduced-motion:reduce){.shake{animation:none}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <small>Biologia 7 · Składniki pokarmowe i ich znaczenie dla organizmu · zajęcia online</small>
+      <h1>Talerz pod lupą</h1>
+    </div>
+    <div class="topr">
+      <a class="deck-link" href="prezentacja.html">Prezentacja →</a>
+      <div class="rank" id="rank" aria-live="polite"></div>
+    </div>
+  </header>
+  <nav class="table" id="nav" aria-label="Części lekcji"></nav>
+  <div class="strip" aria-hidden="true"><i style="background:var(--bialka)"></i><i style="background:var(--cukry)"></i><i style="background:var(--tluszcze)"></i><i style="background:var(--witaminy)"></i><i style="background:var(--sole)"></i><i style="background:var(--woda)"></i><i style="background:var(--blonnik)"></i></div>
+  <main class="sheet" id="main"></main>
+</div>
+
+<div class="timer" id="timer" role="timer" aria-label="Minutnik">
+  <div><span class="lbl" id="tLbl">Minutnik</span><span class="time" id="tTime">05:00</span></div>
+  <button type="button" id="tGo" class="go">Start</button>
+  <button type="button" data-min="3">3′</button>
+  <button type="button" data-min="5">5′</button>
+  <button type="button" data-min="10">10′</button>
+  <button type="button" data-min="15">15′</button>
+</div>
+
+<script>
+/* ---------- ilustracje ---------- */
+const K='#18261d';
+const S=(c)=>`<svg viewBox="0 0 120 90" aria-hidden="true">${c}</svg>`;
+const ICONS={
+ iodine:S(`<path d="M20 60 C18 44 46 40 60 44 C74 48 74 70 58 74 C40 78 22 74 20 60Z" fill="#d6a965" stroke="${K}" stroke-width="3"/><ellipse cx="46" cy="58" rx="10" ry="6" fill="#2b2f7a"/><rect x="78" y="10" width="12" height="40" rx="3" fill="#8a4a1f" stroke="${K}" stroke-width="2"/><path d="M80 50 L84 62 L88 50" fill="#e8e8e8" stroke="${K}" stroke-width="2"/><circle cx="84" cy="70" r="3" fill="#7a3a12"/>`),
+ paper:S(`<rect x="18" y="12" width="84" height="66" rx="4" fill="#fff" stroke="${K}" stroke-width="3"/><circle cx="42" cy="34" r="12" fill="none" stroke="#cfdccf" stroke-width="2" stroke-dasharray="3 3"/><circle cx="78" cy="34" r="12" fill="#f1e6a8" stroke="#d6c46a" stroke-width="2"/><circle cx="42" cy="60" r="12" fill="#f6edc0" stroke="#d6c46a" stroke-width="2"/><circle cx="78" cy="60" r="12" fill="none" stroke="#cfdccf" stroke-width="2" stroke-dasharray="3 3"/>`),
+ bread:S(`<path d="M24 44 C24 26 96 26 96 44 C96 52 90 52 90 52 V76 H30 V52 C30 52 24 52 24 44Z" fill="#e0b070" stroke="${K}" stroke-width="3" stroke-linejoin="round"/><path d="M36 50 V70 H84 V50" fill="#f6e2b8"/><text x="60" y="66" text-anchor="middle" font-size="14" font-family="Lexend, Arial" fill="#c8453b">słodki?</text>`),
+ label:S(`<rect x="28" y="8" width="64" height="76" rx="4" fill="#f4e4c8" stroke="${K}" stroke-width="3"/><rect x="36" y="30" width="48" height="46" fill="#fff" stroke="${K}" stroke-width="1.5"/><g stroke="#cfdccf" stroke-width="2"><path d="M40 40 H80 M40 48 H80 M40 56 H80 M40 64 H80"/></g><text x="60" y="24" text-anchor="middle" font-size="11" font-family="Lexend, Arial" fill="${K}">PŁATKI</text>`),
+ cucumber:S(`<rect x="16" y="58" width="88" height="22" rx="5" fill="#fff" stroke="${K}" stroke-width="3"/><rect x="44" y="62" width="32" height="12" rx="2" fill="${K}"/><text x="60" y="71" text-anchor="middle" font-size="9" fill="#ffe65a" font-family="Lexend, Arial">50 g</text><path d="M24 52 H96" stroke="${K}" stroke-width="3"/>${[36,52,68,84].map(x=>`<circle cx="${x}" cy="40" r="9" fill="#cfe8b0" stroke="#2f8f4e" stroke-width="3"/>`).join('')}`),
+ flax:S(`<path d="M14 30 L18 80 H50 L54 30Z" fill="#cfe8f6"/><path d="M12 22 L18 80 H50 L56 22" fill="none" stroke="${K}" stroke-width="3"/><g fill="#8a5a33">${[[26,70],[34,66],[42,72],[30,60],[40,58]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="3" ry="2"/>`).join('')}</g><path d="M18 52 q16 -8 32 0" stroke="#c9b48a" stroke-width="10" opacity=".55" fill="none"/><path d="M68 30 L72 80 H104 L108 30Z" fill="#cfe8f6"/><path d="M66 22 L72 80 H104 L110 22" fill="none" stroke="${K}" stroke-width="3"/><text x="34" y="14" text-anchor="middle" font-size="10" fill="#56655a" font-family="Lexend, Arial">siemię</text><text x="88" y="14" text-anchor="middle" font-size="10" fill="#56655a" font-family="Lexend, Arial">cukier</text>`),
+ rainbow:S(`${['#c8453b','#e07b14','#2f8f4e','#5b3f8f','#efe7d6'].map((c,i)=>`<circle cx="${20+i*20}" cy="${45+(i%2?10:-10)}" r="13" fill="${c}" stroke="${K}" stroke-width="2"/>`).join('')}`),
+ plate:S(`<circle cx="60" cy="45" r="38" fill="#fff" stroke="${K}" stroke-width="3"/><path d="M60 45 L60 13 A32 32 0 0 0 60 77Z" fill="#2f8f4e"/><path d="M60 45 L60 13 A32 32 0 0 1 92 45Z" fill="#d38f00"/><path d="M60 45 L92 45 A32 32 0 0 1 60 77Z" fill="#c8453b"/>`)
+};
+
+/* ---------- treść ---------- */
+const PLAN=[['Rozgrzewka',5],['Zagadka',5],['Doświadczenie',18],['Przerwa od ekranu',3],['Teoria / slajdy',10],['Gra',11],['Na wynos',8]];
+const L=[
+{sy:'Bi',nm:'Energia i budulec',slides:4,title:'Białka, cukry i tłuszcze',topic:'Rodzaje składników, ich źródła i znaczenie',
+ tray:['talerzyk','plasterek surowego ziemniaka','kawałek chleba','plasterek sera','kawałek jabłka','kilka ziarenek ugotowanego ryżu','jodyna (kapie dorosły)','kartka papieru, odrobina oleju, orzech, łyżeczka wody'],
+ riddle:{q:'Chleb, ziemniaki i makaron wcale nie są słodkie. A jednak są pełne cukru. Jak to możliwe?',a:'Jest w nich <b>skrobia</b>, czyli cukier złożony: długi łańcuch połączonych cząsteczek glukozy. Nie smakuje słodko, ale w organizmie rozkłada się na cukry proste. Sprawdzisz to w doświadczeniu z chlebem.'},
+ exps:[
+  {icon:'iodine',who:'ty',title:'Gdzie się ukrywa skrobia?',steps:['Połóż na talerzyku ziemniak, chleb, ser, jabłko i ryż.','Dorosły kapie na każdy produkt jodyną.','Obserwuj kolor przez minutę i pokaż talerzyk do kamery.'],ask:'Które produkty zrobiły się granatowe?',a:'Ziemniak, chleb i ryż: mają dużo skrobi. Ser i dojrzałe jabłko zostają brązowe od jodyny. Niedojrzałe jabłko może lekko zgranatowieć.'},
+  {icon:'paper',who:'ty',title:'Test tłustej plamy',steps:['Na kartce narysuj 4 kółka: woda, olej, orzech, jabłko.','Każdym produktem potrzyj papier w jego kółku.','Po 10 minutach popatrz na kartkę pod światło.'],ask:'Które plamy zostały?',a:'Olej i orzech zostawiły prześwitującą plamę, bo zawierają tłuszcz. Woda i sok z jabłka wyparowały bez śladu.'},
+  {icon:'bread',who:'ty',title:'Chleb, który robi się słodki',steps:['Weź do ust mały kawałek chleba.','Żuj go powoli przez minutę, nie połykając.'],ask:'Czy smak się zmienił?',a:'Chleb robi się lekko słodki. Ślina zawiera enzym, który rozkłada skrobię na słodkie cukry prostsze. Trawienie zaczyna się już w ustach!'}
+ ],
+ blocks:[
+  {type:'sort',title:'Czego jest tu najwięcej?',sub:'Przy każdym produkcie stuknij składnik, którego ma najwięcej.',bins:['białka','cukry','tłuszcze'],colors:['var(--bialka)','var(--cukry)','var(--tluszcze)'],items:[['jajko',0],['twaróg',0],['fasola',0],['ryba',0],['chleb',1],['ziemniak',1],['makaron',1],['miód',1],['masło',2],['olej',2],['smalec',2],['majonez',2]]},
+  {type:'quiz',title:'Do czego to służy?',sub:'Jedna dobra odpowiedź w każdym pytaniu.',items:[
+   ['Głównym budulcem mięśni są…',0,'',['białka','cukry','tłuszcze']],
+   ['Głównym źródłem energii są…',1,'',['białka','cukry','witaminy']],
+   ['Najwięcej energii z 1 grama dają…',2,'Ponad 2 razy więcej niż białka i cukry.',['białka','cukry','tłuszcze']],
+   ['Białka są zbudowane z…',0,'',['aminokwasów','glukozy','witamin']],
+   ['Skrobia to…',1,'Skrobia to długi łańcuch połączonych cząsteczek glukozy.',['cukier prosty','cukier złożony','tłuszcz']],
+   ['Bez tłuszczów nie wchłoniemy witamin…',0,'',['A, D, E, K','B i C','żadnych']]]}
+ ],
+ take:'[Białka] są głównym budulcem ciała. Głównym źródłem energii są [cukry|węglowodany]. Najwięcej energii z 1 grama dają [tłuszcze]. Skrobię w jedzeniu wykrywamy [jodyną|jodem|płynem lugola].'},
+
+{sy:'Wi',nm:'Witaminy i sole',slides:11,title:'Witaminy, sole mineralne i woda',topic:'Składniki regulujące pracę organizmu',
+ tray:['opakowanie płatków, mleka albo soku z tabelką wartości odżywczych','opakowanie soli kuchennej','pół ogórka i nóż (kroi dorosły)','waga kuchenna','talerzyk','szklanka wody'],
+ riddle:{q:'Dlaczego na wielu opakowaniach soli kuchennej jest napis „jodowana”?',a:'Jod jest potrzebny tarczycy do wytwarzania hormonów. Kiedyś w Polsce brakowało go w jedzeniu i wiele osób chorowało na <b>wole</b>, czyli powiększoną tarczycę. Dlatego do soli dodaje się jod.'},
+ exps:[
+  {icon:'label',who:'ty',title:'Detektyw etykiet',steps:['Znajdź na opakowaniu tabelkę wartości odżywczych.','Pokaż ją z bliska do kamery.','Wypisz wszystkie witaminy i sole mineralne, które tam są.'],ask:'Co dodano do produktu?',a:'Często są to witaminy z grupy B, witamina D, wapń albo żelazo. Producenci dodają je, bo wiele osób ma ich za mało.'},
+  {icon:'cucumber',who:'ty',title:'Ile wody jest w ogórku?',steps:['Pokrój ogórek w cienkie plasterki i zważ je, np. 50 g.','Rozłóż plasterki na talerzyku i postaw na kaloryferze na 1–2 dni.','Zważ jeszcze raz i wyślij zdjęcie wyniku.'],ask:'Ile zostało z 50 gramów?',a:'Zostaje około 2–3 g. Ogórek to w około 95% woda, która wyparowała.'}
+ ],
+ blocks:[
+  {type:'memory',title:'Memory: czego brakuje?',sub:'Znajdź pary: witamina albo pierwiastek i skutek jego niedoboru.',pairs:[['wit. A','kurza ślepota'],['wit. D','krzywica'],['wit. C','szkorbut'],['wit. K','słabe krzepnięcie krwi'],['żelazo','anemia'],['jod','wole'],['wapń','łamliwe kości'],['fluor','próchnica']]},
+  {type:'match',title:'Gdzie tego szukać?',sub:'Dopasuj źródło do składnika.',o:['fluor','jod','wapń','witamina A','witamina C','witamina D','witamina K','żelazo'],items:[['mleko, jogurt i sery','wapń'],['sól jodowana i ryby morskie','jod'],['papryka, natka pietruszki, kiszonki','witamina C'],['marchew','witamina A'],['kasza gryczana, mięso, strączki','żelazo'],['zielone warzywa liściaste','witamina K'],['słońce na skórze, tłuste ryby','witamina D'],['pasta do zębów','fluor']]},
+  {type:'sort',title:'W czym się rozpuszcza?',sub:'Posortuj witaminy.',bins:['w tłuszczach','w wodzie'],colors:['var(--tluszcze)','var(--woda)'],items:[['A',0],['B',1],['C',1],['D',0],['E',0],['K',0]]},
+  {type:'quiz',title:'Woda w organizmie',sub:'',items:[
+   ['Jaką część masy ciała stanowi woda?',1,'U dzieci więcej niż u dorosłych.',['ok. 10–20%','ok. 60–70%','ok. 95%']],
+   ['Do czego służy pot?',0,'',['chłodzi ciało','dostarcza energii','buduje mięśnie']],
+   ['Kiedy trzeba pić więcej?',0,'',['w upał i przy sporcie','tylko zimą','tylko przy posiłkach']],
+   ['Ile wody jest w ogórku?',2,'',['ok. 50%','ok. 75%','ok. 95%']]]}
+ ],
+ take:'Witaminy rozpuszczalne w tłuszczach to A, D, E i [K]. Brak witaminy [C] powoduje szkorbut. Żelazo jest potrzebne do budowy [hemoglobiny], a jego brak powoduje [anemię|niedokrwistość].'},
+
+{sy:'Bł',nm:'Błonnik i kolory',slides:14,title:'Błonnik, warzywa i owoce',topic:'Rola błonnika · znaczenie warzyw i owoców',
+ tray:['łyżka siemienia lnianego albo otrąb','łyżka cukru','2 szklanki wody i łyżeczka','warzywa i owoce z kuchni w różnych kolorach','kartka i kredki'],
+ riddle:{q:'Błonnika nie trawimy i nie daje nam energii. To po co go w ogóle jeść?',a:'Błonnik pęcznieje w jelitach i jak miotła pobudza je do pracy. Chroni przed zaparciami, daje sytość na dłużej i karmi pożyteczne bakterie jelitowe.'},
+ exps:[
+  {icon:'flax',who:'ty',title:'Błonnik pęcznieje',steps:['Do jednej szklanki wsyp siemię lub otręby, do drugiej cukier.','Zalej wodą i zamieszaj.','Odczekaj 15 minut, zamieszaj jeszcze raz i pokaż obie szklanki do kamery.'],ask:'Czym różnią się szklanki?',a:'Cukier się rozpuścił i zniknął. Siemię napęczniało, a woda zrobiła się gęsta i kleista. Tak samo błonnik zachowuje się w jelitach.'},
+  {icon:'rainbow',who:'ty',title:'Tęcza z kuchni',steps:['Znajdź warzywa i owoce w 5 kolorach: czerwonym, pomarańczowym, zielonym, fioletowym i białym.','Ułóż je w rzędzie i pokaż do kamery.'],ask:'Którego koloru brakowało?',a:'Najczęściej fioletowego (borówki, śliwki, czerwona kapusta). Każdy kolor to trochę inne witaminy i sole mineralne, dlatego warto jeść kolorowo.'},
+  {icon:'plate',who:'ty',title:'Mój talerz',steps:['Narysuj duży talerz.','Podziel go: połowa na warzywa i owoce, ćwierć na produkty zbożowe, ćwierć na produkty białkowe.','Narysuj w nim obiad, który lubisz.'],ask:'Czego na Twoim talerzu jest najwięcej?',a:'Na dobrze ułożonym talerzu najwięcej miejsca zajmują warzywa i owoce. Obok szklanka wody.'}
+ ],
+ blocks:[
+  {type:'sort',title:'Ułóż talerz',sub:'Do której części talerza zdrowego żywienia pasuje produkt?',bins:['warzywa i owoce','produkty zbożowe','produkty białkowe'],colors:['var(--witaminy)','var(--cukry)','var(--bialka)'],items:[['brokuł',0],['pomidor',0],['jabłko',0],['marchew',0],['kasza gryczana',1],['chleb pełnoziarnisty',1],['makaron razowy',1],['brązowy ryż',1],['jajko',2],['ryba',2],['fasola',2],['twaróg',2]]},
+  {type:'quiz',title:'Prawda czy fałsz?',sub:'Sprawdź, co wiesz o błonniku.',o:['prawda','fałsz'],items:[['Błonnik jest trawiony i daje dużo energii.',1,'Nie jest trawiony, więc nie daje energii.'],['Błonnik pobudza ruchy jelit.',0],['Najwięcej błonnika jest w białym pieczywie.',1,'Więcej jest w pieczywie pełnoziarnistym.'],['Owoce ze skórką mają więcej błonnika niż obrane.',0],['Błonnik daje uczucie sytości na dłużej.',0],['Dużo błonnika jest w mięsie.',1,'Błonnik pochodzi z roślin.']]}
+ ],
+ take:'Błonnika nasz organizm nie [trawi]. Błonnik pobudza ruchy [jelit]. Warzywa i owoce powinny zajmować [połowę|pół|1/2] talerza.'},
+
+{sy:'Er',nm:'Escape room',title:'Ucieczka ze stołówki',topic:'Powtórka całego tematu',escape:true,
+ riddle:{q:'Sejf z dyplomem ma pięciocyfrowy kod. Każda kłódka skrywa jedną cyfrę. Otwórz wszystkie!',a:'Kod składasz z cyfr w kolejności kłódek: od 1 do 5.'},
+ blocks:[
+  {type:'escape'},
+  {type:'quiz',title:'Mini-sprawdzian',sub:'10 pytań z całego tematu.',items:[
+   ['Głównym budulcem ciała są…',0,'',['białka','cukry','tłuszcze']],
+   ['Dużo skrobi jest w…',0,'',['ziemniakach','oleju','serze']],
+   ['Skrobię wykrywamy…',0,'',['jodyną','octem','wodą']],
+   ['Prześwitująca plama na papierze świadczy o…',1,'',['wodzie','tłuszczu','białku']],
+   ['Brak witaminy D u dzieci powoduje…',1,'',['szkorbut','krzywicę','wole']],
+   ['Anemia może być skutkiem braku…',0,'',['żelaza','fluoru','jodu']],
+   ['W wodzie rozpuszcza się witamina…',1,'',['A','C','K']],
+   ['Jaką część masy ciała stanowi woda?',1,'',['ok. 20%','ok. 65%','ok. 95%']],
+   ['Błonnik…',1,'',['daje dużo energii','pobudza pracę jelit','buduje mięśnie']],
+   ['Połowę talerza powinny zajmować…',0,'',['warzywa i owoce','produkty zbożowe','mięso']]]},
+  {type:'mind',title:'Mapa całego tematu'}
+ ]}
+];
+const LOCKS=[
+ {t:'białka',a:3,q:'Ile z tych produktów to dobre źródło białka? Jajko · jabłko · ser · ryż · fasola · ogórek.'},
+ {t:'witaminy',a:2,q:'Ile z tych witamin rozpuszcza się w wodzie? A · B · C · D · E · K.'},
+ {t:'skrobia',a:5,q:'Ile z tych produktów zgranatowieje po kropli jodyny? Ziemniak · chleb · ser · makaron · olej · ryż · kasza · cukier.'},
+ {t:'energia',a:4,q:'Ile z tych składników NIE dostarcza nam energii? Białka · cukry · tłuszcze · witaminy · sole mineralne · woda · błonnik.'},
+ {t:'grupy',a:6,q:'Ile jest grup składników pokarmowych, nie licząc błonnika?'}
+];
+const CODE='32546';
+
+/* ---------- stan ---------- */
+const store={get(k,d){try{const v=localStorage.getItem('bio7:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('bio7:'+k,JSON.stringify(v))}catch(e){}}};
+let state={lesson:1,done:store.get('done',[])};
+
+/* ---------- pomocnicze ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const norm=s=>String(s).trim().toLowerCase().replace(/ł/g,'l').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ');
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const BLOCKS={};
+const exHead=b=>`<h4>${b.title}</h4>${b.sub?`<p class="sub">${b.sub}</p>`:''}`;
+const actions=k=>`<div class="ex-actions"><button type="button" class="btn" data-check="${k}">Sprawdź odpowiedzi</button><button type="button" class="btn ghost" data-reset>Od nowa</button><span class="score" aria-live="polite"></span></div>`;
+const chip=(it,bins)=>`<div class="chip" data-a="${it.a}"><span class="t">${it.t}</span><span class="to">${bins.map((n,k)=>`<button type="button" data-to="${k}">→ ${n}</button>`).join('')}</span></div>`;
+
+const R={
+ quiz(b,id){return `<div class="ex" id="${id}">${exHead(b)}${b.items.map((it,i)=>{const opts=it[3]||b.o;return `<fieldset class="q" data-a="${it[1]}"><legend><span class="qn">${i+1}.</span>${it[0]}</legend><div class="opts">${opts.map((o,j)=>`<label class="opt"><input type="radio" name="${id}-${i}" value="${j}"><span>${o}</span></label>`).join('')}</div>${it[2]?`<p class="why" hidden>${it[2]}</p>`:''}</fieldset>`}).join('')}${actions('quiz')}</div>`},
+ match(b,id){return `<div class="ex" id="${id}">${exHead(b)}<div class="rows">${b.items.map((it,i)=>`<div class="row"><label for="${id}-${i}">${it[0]}</label><select id="${id}-${i}" data-a="${it[1]}"><option value="">wybierz…</option>${b.o.map(o=>`<option>${o}</option>`).join('')}</select></div>`).join('')}</div>${actions('match')}</div>`},
+ sort(b,id){const items=shuffle(b.items.map(it=>({t:it[0],a:it[1]})));return `<div class="ex" id="${id}">${exHead(b)}<div class="pool">${items.map(it=>chip(it,b.bins)).join('')}</div><div class="bins">${b.bins.map((n,k)=>`<div class="bin" data-bin="${k}" style="border-top-color:${(b.colors||[])[k]||'var(--ink)'}"><h5>${n}</h5><div class="items"></div></div>`).join('')}</div>${actions('sort')}</div>`},
+ memory(b,id){const cards=shuffle(b.pairs.flatMap((p,k)=>[{k,t:p[0]},{k,t:p[1]}]));return `<div class="ex" id="${id}">${exHead(b)}<div class="mem">${cards.map((c,i)=>`<button type="button" class="card" data-k="${c.k}" data-t="${c.t}" aria-label="karta ${i+1}">?</button>`).join('')}</div><div class="ex-actions"><button type="button" class="btn ghost" data-reset>Nowa runda</button><span class="score" aria-live="polite"></span></div></div>`},
+ escape(b,id){return `<div class="ex" id="${id}"><h4>Pięć kłódek</h4><p class="sub">Wpisz jedną cyfrę i stuknij „Otwórz”.</p><div class="locks">${LOCKS.map((l,i)=>`<div class="lock" data-a="${l.a}"><h4><span>Kłódka ${i+1}: ${l.t}</span><span class="state" aria-hidden="true">🔒</span></h4><div>${l.q}</div><div class="pad"><input type="text" inputmode="numeric" maxlength="1" id="${id}-l${i}" aria-label="Cyfra kłódki ${i+1}"><button type="button" class="btn small" data-lock>Otwórz</button></div><p class="why" hidden></p></div>`).join('')}</div><div class="safe"><label for="${id}-code"><b>Kod do sejfu:</b></label><input type="text" inputmode="numeric" maxlength="5" id="${id}-code" autocomplete="off"><button type="button" class="btn" data-safe>Otwórz sejf</button><span class="score" aria-live="polite"></span></div><div class="diploma" hidden><div class="t1">Talerz pod lupą · Biologia 7</div><h3>Dyplom Znawczyni Talerza</h3><p>otrzymuje</p><div class="name">…</div><p style="margin:16px 0 4px">za poznanie tematu <b>Składniki pokarmowe i ich znaczenie dla organizmu</b></p><p style="margin:0;color:var(--muted)">${new Date().toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'})}</p><div class="nameinp"><label for="${id}-nm" class="sr">Imię</label><input type="text" id="${id}-nm" placeholder="Wpisz swoje imię"></div></div></div>`},
+ mind(b,id){return `<div class="ex" id="${id}"><h4>${b.title}</h4><p class="sub">Przepisz do zeszytu albo zrób zrzut ekranu.</p><div class="mind"><div class="box" style="background:var(--bialka)"><h5>Budulec</h5><ul><li>białka (z aminokwasów)</li><li>sole mineralne, np. wapń</li><li>woda</li></ul></div><div class="box" style="background:var(--cukry)"><h5>Energia</h5><ul><li>cukry: proste i złożone (skrobia)</li><li>tłuszcze: najwięcej energii z 1 g</li><li>skrobia → jodyna; tłuszcz → plama</li></ul></div><div class="box" style="background:var(--witaminy)"><h5>Regulacja</h5><ul><li>witaminy A, D, E, K (w tłuszczach), B, C (w wodzie)</li><li>sole mineralne: Ca, Fe, I, F, Mg</li><li>niedobór → choroby</li></ul></div><div class="box" style="background:var(--blonnik)"><h5>Błonnik i talerz</h5><ul><li>nie jest trawiony, pobudza jelita</li><li>½ talerza: warzywa i owoce</li><li>jedz kolorowo, pij wodę</li></ul></div><div class="rule"><b>Najważniejsze:</b> nie ma jednego „idealnego” produktu. Każdy składnik jest potrzebny, dlatego jemy różnorodnie.</div></div></div>`}
+};
+function cloze(text,id){let k=0;return text.replace(/\[([^\]]+)\]/g,(m,a)=>{const alts=a.split('|');const w=Math.max(...alts.map(x=>x.length))+2;return `<input type="text" id="${id}-c${k++}" data-a="${alts.join('|')}" style="width:${w}ch" aria-label="luka" autocomplete="off" autocapitalize="off">`})}
+
+/* ---------- render ---------- */
+function renderNav(){
+  $('#nav').innerHTML=L.map((l,i)=>`<a class="el${state.done.includes(i+1)?' done':''}" href="#czesc-${i+1}"${state.lesson===i+1?' aria-current="page"':''}><span class="nr">${i+1}</span><span class="sy">${l.sy}</span><span class="nm">${l.nm}</span><span class="stamp" aria-label="zaliczone">✓</span></a>`).join('');
+  $('#rank').textContent=`Pieczątki: ${state.done.length} / ${L.length}`;
+}
+function renderLesson(){
+  const n=state.lesson,l=L[n-1];let k=0;const sec=t=>`<section class="blk"><h3><span class="k">${++k}</span>${t}</h3>`;
+  let h=`<div class="lesson-head"><div class="eyebrow">Część ${n} z ${L.length} · ${l.topic}</div><h2><span class="hl">${l.title}</span></h2>${l.slides?`<a class="slides-link" href="prezentacja.html#slajd-${l.slides}">Slajdy do tej części →</a>`:''}</div>`;
+  if(!l.escape){
+    h+=`<div class="plan" aria-label="Plan godziny">${PLAN.map(p=>`<button type="button" data-plan="${p[1]}" data-lbl="${p[0]}">${p[0]} <b>${p[1]}′</b></button>`).join('')}</div><p class="plan-hint">Stuknij etap, żeby ustawić minutnik.</p>`;
+    h+=sec('Na tacy przy komputerze')+`<ul class="tray">${l.tray.map((t,i)=>`<li><label><input type="checkbox" id="tray-${n}-${i}"><span>${t}</span></label></li>`).join('')}</ul></section>`;
+  }
+  h+=sec('Zagadka na start')+`<div class="riddle"><p class="q">${l.riddle.q}</p><button type="button" class="btn ghost" data-reveal>Pokaż odpowiedź</button><div class="answer" hidden>${l.riddle.a}</div></div></section>`;
+  if(l.exps)h+=sec('Doświadczenia przy kamerze')+`<div class="exps">${l.exps.map(e=>`<article class="exp"><div class="pic">${ICONS[e.icon]}</div><div><span class="who ${e.who}">${e.who==='ty'?'Robisz sama':'Pokaz prowadzącego'}</span><h4>${e.title}</h4><ol>${e.steps.map(s=>`<li>${s}</li>`).join('')}</ol><p class="ask">${e.ask}</p><button type="button" class="btn ghost small" data-reveal>Co się stało?</button><div class="answer" hidden>${e.a}</div></div></article>`).join('')}</div></section>`;
+  h+=sec(l.escape?'Gra':'Ćwiczenia i gry')+l.blocks.map((b,i)=>{const id=`b${n}-${i}`;BLOCKS[id]=b;return R[b.type](b,id)}).join('')+`</section>`;
+  if(l.take)h+=sec('3 zdania na wynos')+`<div class="ex takeaway" id="take-${n}"><p class="sub">Uzupełnij luki, sprawdź, a potem przepisz zdania do zeszytu i wyślij zdjęcie.</p><p class="cloze">${cloze(l.take,'take'+n)}</p>${actions('cloze')}</div></section>`;
+  const done=state.done.includes(n);
+  h+=`<div class="finish"><button type="button" class="btn${done?' stamped':''}" data-stamp>${done?'Pieczątka przybita ✓':'Zaliczone! Przybij pieczątkę'}</button><div style="display:flex;gap:8px;flex-wrap:wrap">${n>1?`<a class="btn ghost" href="#czesc-${n-1}">← Część ${n-1}</a>`:''}${n<L.length?`<a class="btn ghost" href="#czesc-${n+1}">Część ${n+1} →</a>`:''}</div></div>`;
+  $('#main').innerHTML=h;
+}
+function render(){renderNav();renderLesson()}
+
+/* ---------- sprawdzanie ---------- */
+function setScore(ex,ok,all){const s=$('.score',ex);if(s)s.textContent=`${ok} / ${all}${ok===all?' · brawo!':''}`}
+const CHECK={
+ quiz(ex){let ok=0;const fs=$$('fieldset.q',ex);fs.forEach(f=>{f.classList.remove('ok','bad','empty');$$('.opt',f).forEach(o=>o.classList.remove('missed'));const c=$('input:checked',f);if(!c){f.classList.add('empty');return}const g=c.value===f.dataset.a;f.classList.add(g?'ok':'bad');if(g)ok++;else $$('.opt',f).forEach(o=>o.classList.toggle('missed',$('input',o).value===f.dataset.a));const w=$('.why',f);if(w)w.hidden=false});setScore(ex,ok,fs.length)},
+ match(ex){let ok=0;const ss=$$('select',ex);ss.forEach(s=>{s.classList.remove('ok','bad');const g=s.value===s.dataset.a;s.classList.add(g?'ok':'bad');if(g)ok++});setScore(ex,ok,ss.length)},
+ sort(ex){let ok=0;const all=$$('.chip',ex);$$('.bin',ex).forEach(b=>$$('.chip',b).forEach(c=>{const g=c.dataset.a===b.dataset.bin;c.classList.remove('ok','bad');c.classList.add(g?'ok':'bad');if(g)ok++}));setScore(ex,ok,all.length)},
+ cloze(ex){let ok=0;const is=$$('.cloze input',ex);is.forEach(i=>{i.classList.remove('ok','bad');const g=i.dataset.a.split('|').some(a=>norm(a)===norm(i.value));i.classList.add(g?'ok':'bad');if(g)ok++});setScore(ex,ok,is.length);if(ok<is.length)$('.score',ex).textContent+=' · popraw czerwone luki'}
+};
+
+/* ---------- zdarzenia ---------- */
+let memOpen=[];
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  const ex=t.closest('.ex');
+  if(t.matches('[data-reveal]')){const a=t.nextElementSibling;a.hidden=!a.hidden;t.textContent=a.hidden?(t.closest('.riddle')?'Pokaż odpowiedź':'Co się stało?'):'Ukryj';return}
+  if(t.matches('[data-check]')){CHECK[t.dataset.check](ex);return}
+  if(t.matches('[data-reset]')){const id=ex.id;if(id.startsWith('take-')){$$('input',ex).forEach(i=>{i.value='';i.classList.remove('ok','bad')});$('.score',ex).textContent='';return}ex.outerHTML=R[BLOCKS[id].type](BLOCKS[id],id);memOpen=[];return}
+  if(t.dataset.to!==undefined){const c=t.closest('.chip');c.classList.remove('ok','bad');$('.to',c).hidden=true;if(!$('.back',c))c.insertAdjacentHTML('beforeend','<button type="button" class="back" aria-label="Cofnij">↩</button>');$(`.bin[data-bin="${t.dataset.to}"] .items`,ex).appendChild(c);return}
+  if(t.matches('.back')){const c=t.closest('.chip');c.classList.remove('ok','bad');t.remove();$('.to',c).hidden=false;$('.pool',ex).appendChild(c);return}
+  if(t.matches('.card')){memClick(t,ex);return}
+  if(t.matches('[data-lock]')){const l=t.closest('.lock'),i=$('input',l),w=$('.why',l);if(i.value.trim()===l.dataset.a){l.classList.add('open');$('.state',l).textContent='🔓';$('.pad',l).outerHTML=`<div class="digit">${l.dataset.a}</div>`;w.hidden=true}else{l.classList.remove('shake');void l.offsetWidth;l.classList.add('shake');w.hidden=false;w.textContent='Nie ta cyfra. Policz jeszcze raz.'}return}
+  if(t.matches('[data-safe]')){const i=$('.safe input',ex),s=$('.safe .score',ex);if(i.value.trim()===CODE){s.textContent='Sejf otwarty!';const d=$('.diploma',ex);d.hidden=false;d.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'})}else s.textContent='Zły kod. Sprawdź kłódki.';return}
+  if(t.matches('[data-stamp]')){const n=state.lesson;if(!state.done.includes(n))state.done.push(n);store.set('done',state.done);render();return}
+  if(t.matches('[data-plan]')){setTimer(+t.dataset.plan,t.dataset.lbl);return}
+});
+document.addEventListener('input',e=>{if(e.target.matches('.nameinp input')){$('.name',e.target.closest('.diploma')).textContent=e.target.value||'…'}});
+function memClick(c,ex){
+  if(c.classList.contains('found')||c.classList.contains('up')||memOpen.length===2)return;
+  c.classList.add('up');c.textContent=c.dataset.t;memOpen.push(c);
+  if(memOpen.length===2){const [a,b]=memOpen;
+    if(a.dataset.k===b.dataset.k){a.classList.add('found');b.classList.add('found');memOpen=[];const f=$$('.card.found',ex).length/2,all=$$('.card',ex).length/2;$('.score',ex).textContent=`Pary: ${f} / ${all}${f===all?' · brawo!':''}`}
+    else setTimeout(()=>{[a,b].forEach(x=>{x.classList.remove('up');x.textContent='?'});memOpen=[]},1300)}
+}
+
+/* ---------- minutnik ---------- */
+let tLeft=300,tRun=null;const tEl=$('#timer'),tTime=$('#tTime'),tLbl=$('#tLbl'),tGo=$('#tGo');
+const tShow=()=>{tTime.textContent=String(Math.floor(tLeft/60)).padStart(2,'0')+':'+String(tLeft%60).padStart(2,'0')};
+function setTimer(min,lbl){clearInterval(tRun);tRun=null;tLeft=min*60;tLbl.textContent=lbl||'Minutnik';tEl.classList.remove('end');tGo.textContent='Start';tShow()}
+tGo.addEventListener('click',()=>{if(tRun){clearInterval(tRun);tRun=null;tGo.textContent='Start';return}if(tLeft<=0)tLeft=60;tEl.classList.remove('end');tGo.textContent='Pauza';tRun=setInterval(()=>{tLeft--;tShow();if(tLeft<=0){clearInterval(tRun);tRun=null;tGo.textContent='Start';tEl.classList.add('end');tLbl.textContent='Czas minął!'}},1000)});
+$$('#timer [data-min]').forEach(b=>b.addEventListener('click',()=>setTimer(+b.dataset.min)));tShow();
+
+/* ---------- routing ---------- */
+function fromHash(){const m=location.hash.match(/^#czesc-([1-4])$/);return m?+m[1]:null}
+window.addEventListener('hashchange',()=>{state.lesson=fromHash()||1;store.set('last',state.lesson);render();window.scrollTo(0,0)});
+state.lesson=fromHash()||store.get('last',1);render();
+</script>
+</body>
+</html>
