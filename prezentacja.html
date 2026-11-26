@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Co jest na talerzu? – prezentacja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Caveat:wght@600;700&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Plan: slajdy 16:9 jak kartki z zeszytu w kratkę. Każdy składnik pokarmowy ma swój kolor,
+   ten sam w prezentacji i na stronie z zadaniami. Jeden motyw (jasny), z wyboru. */
+:root{
+  --paper:#fbfcfa; --grid:#e4ebe2; --ink:#18261d; --muted:#56655a; --leaf:#1f7a4a; --leaf-soft:#e3f2e8; --marker:#ffe65a; --card:#ffffff; --line:#cfdccf;
+  --bialka:#c8453b; --cukry:#d38f00; --tluszcze:#7a5cc2; --witaminy:#2f8f4e; --sole:#4a6fa5; --woda:#1f97cc; --blonnik:#8a6a3f;
+  --display:"Bricolage Grotesque","Trebuchet MS",Arial,sans-serif;
+  --body:"Lexend","Segoe UI",system-ui,-apple-system,sans-serif;
+  --hand:"Caveat","Bradley Hand","Comic Sans MS",cursive;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:#2a3a2f;color:var(--ink);font-family:var(--body);overflow:hidden;-webkit-text-size-adjust:100%;touch-action:manipulation}
+.stage{position:fixed;inset:0 0 56px 0;display:flex;align-items:center;justify-content:center}
+.deck{width:1280px;height:720px;position:relative;transform-origin:center center;flex:none}
+.slide{position:absolute;inset:0;display:none;padding:64px 80px 56px 104px;border-radius:6px;overflow:hidden;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px;
+  box-shadow:0 20px 60px -20px rgba(0,0,0,.5)}
+.slide::before{content:"";position:absolute;top:0;bottom:0;left:72px;width:3px;background:#f0b9b2}
+.slide.on{display:flex;flex-direction:column}
+@media (prefers-reduced-motion:no-preference){.slide.on{animation:in .35s ease-out}}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.05;text-wrap:balance}
+.eyebrow{font-size:20px;color:var(--muted);margin-bottom:10px;letter-spacing:.02em}
+h2{font-size:56px;font-weight:800;margin-bottom:26px}
+.hl{background:linear-gradient(transparent 60%,var(--marker) 60%,var(--marker) 92%,transparent 92%);padding:0 .06em}
+p,li{font-size:26px;line-height:1.4}
+.big{font-size:30px}
+.muted{color:var(--muted)}
+.two{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;flex:1}
+.two.even{grid-template-columns:1fr 1fr}
+ul.dots{margin:0;padding-left:28px}
+ul.dots li{margin:6px 0}
+.hand{font-family:var(--hand);font-size:40px;color:var(--leaf);line-height:1.1}
+.tag{display:inline-block;font-size:18px;font-weight:600;color:#fff;border-radius:6px;padding:4px 12px;margin-bottom:14px}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:18px 20px}
+.foods{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.food{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:8px;text-align:center;font-size:18px}
+.food svg{width:100%;height:84px;display:block}
+.src{font-size:22px;margin:10px 0 0}
+.src b{font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:22px;background:var(--card)}
+th,td{border:1.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+th{background:var(--ink);color:#fff;font-weight:500}
+td:first-child{font-family:var(--display);font-weight:800;font-size:26px;width:80px;text-align:center}
+.grid7{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.nut{border-radius:12px;padding:16px 18px;color:#fff;min-height:150px;display:flex;flex-direction:column;justify-content:space-between}
+.nut h3{font-size:30px}
+.nut p{font-size:19px;margin:0;line-height:1.3}
+.b{background:var(--bialka)}.c{background:var(--cukry)}.t{background:var(--tluszcze)}.w{background:var(--witaminy)}.s{background:var(--sole)}.h{background:var(--woda)}.f{background:var(--blonnik)}
+.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;flex:1}
+.role{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:20px}
+.role h3{font-size:34px;margin-bottom:8px}
+.role p{font-size:22px;margin:0 0 12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{color:#fff;border-radius:999px;padding:5px 14px;font-size:19px;font-weight:500}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+.steps li{counter-increment:s;position:relative;padding-left:52px;margin:10px 0}
+.steps li::before{content:counter(s);position:absolute;left:0;top:2px;width:38px;height:38px;border-radius:50%;background:var(--leaf);color:#fff;font-weight:600;display:flex;align-items:center;justify-content:center;font-size:22px}
+.res{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.res div{border-radius:10px;padding:10px;font-size:20px;text-align:center;border:1.5px solid var(--line);background:var(--card)}
+.res .yes{border-color:#2b2f7a;background:#e3e5fa}
+.bignum{font-family:var(--display);font-weight:800;font-size:150px;color:var(--woda);line-height:.9}
+.rainbow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;flex:1}
+.rb{border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:flex-end;min-height:300px;color:#fff}
+.rb h3{font-size:30px;margin-bottom:6px}.rb p{font-size:19px;margin:0;line-height:1.3}
+.takes{display:grid;gap:14px}
+.takes div{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:16px 22px;font-size:27px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--leaf);color:#fff;text-decoration:none;border-radius:10px;padding:14px 22px;font-weight:600;font-size:24px}
+.foot{position:absolute;right:28px;bottom:16px;font-size:16px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* pasek sterowania */
+.bar{position:fixed;left:0;right:0;bottom:0;height:56px;background:#18261d;color:#fff;display:flex;align-items:center;gap:8px;padding:0 12px}
+.bar button,.bar a{background:transparent;border:1.5px solid #4c6253;color:#fff;border-radius:8px;min-height:40px;min-width:44px;padding:0 12px;font:inherit;font-size:15px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+.bar .prog{flex:1;height:6px;background:#33463a;border-radius:3px;overflow:hidden}
+.bar .prog i{display:block;height:100%;background:var(--marker);width:0}
+.bar .ct{font-variant-numeric:tabular-nums;font-size:15px;min-width:64px;text-align:center}
+:focus-visible{outline:3px solid var(--marker);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="stage" id="stage"><div class="deck" id="deck">
+
+<section class="slide" data-t="Tytuł">
+  <div class="two">
+    <div>
+      <div class="eyebrow">Biologia · klasa 7</div>
+      <h1 style="font-size:96px;font-weight:800;margin-bottom:22px"><span class="hl">Co jest na talerzu?</span></h1>
+      <p class="big muted" style="max-width:20ch">Składniki pokarmowe i ich znaczenie dla organizmu</p>
+    </div>
+    <div id="plate1"></div>
+  </div>
+</section>
+
+<section class="slide" data-t="Zagadka">
+  <div class="eyebrow">Zagadka na start</div>
+  <div class="two">
+    <div>
+      <p class="hand" style="font-size:54px">Rok 1747. Na długim rejsie marynarzom krwawią dziąsła, rany się nie goją, wypadają zęby.</p>
+      <p class="big" style="margin-top:28px">Co im dolega? I co lekarz okrętowy dał chorym do jedzenia, żeby wyzdrowieli?</p>
+    </div>
+    <div class="card" style="text-align:center"><svg viewBox="0 0 200 150" width="100%" aria-hidden="true"><path d="M20 100 H180 L160 130 H40Z" fill="#8a5a33" stroke="#18261d" stroke-width="3"/><path d="M100 20 V100" stroke="#18261d" stroke-width="4"/><path d="M104 24 L150 90 H104Z" fill="#fff" stroke="#18261d" stroke-width="3"/><path d="M96 30 L58 90 H96Z" fill="#fff" stroke="#18261d" stroke-width="3"/><path d="M0 138 q20 -10 40 0 t40 0 t40 0 t40 0 t40 0" stroke="#1f97cc" stroke-width="4" fill="none"/></svg><p class="muted" style="font-size:20px;margin:6px 0 0">Rejs trwa miesiące. W ładowni: suchary, solone mięso, piwo.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-t="Odpowiedź">
+  <div class="eyebrow">Odpowiedź</div>
+  <h2>Szkorbut: <span class="hl">brak witaminy C</span></h2>
+  <div class="two">
+    <div>
+      <ul class="dots">
+        <li>Lekarz James Lind podzielił chorych marynarzy na grupy i każdej dał co innego.</li>
+        <li>Wyzdrowieli ci, którzy dostawali <b>cytryny i pomarańcze</b>.</li>
+        <li>Wniosek: niektórych składników potrzebujemy w malutkich ilościach, ale bez nich chorujemy.</li>
+      </ul>
+    </div>
+    <div class="foods"><div class="food" data-f="lemon">cytryna</div><div class="food" data-f="pepper">papryka</div><div class="food" data-f="cabbage">kiszona kapusta</div></div>
+  </div>
+</section>
+
+<section class="slide" data-t="Składniki">
+  <div class="eyebrow">Co jest w jedzeniu</div>
+  <h2>Sześć grup składników <span class="hl">+ błonnik</span></h2>
+  <div class="grid7">
+    <div class="nut b"><h3>Białka</h3><p>budulec ciała</p></div>
+    <div class="nut c"><h3>Cukry</h3><p>główne źródło energii (węglowodany)</p></div>
+    <div class="nut t"><h3>Tłuszcze</h3><p>zapas energii, ochrona i ciepło</p></div>
+    <div class="nut w"><h3>Witaminy</h3><p>regulują pracę organizmu</p></div>
+    <div class="nut s"><h3>Sole mineralne</h3><p>budulec kości, regulacja</p></div>
+    <div class="nut h"><h3>Woda</h3><p>środowisko wszystkich procesów</p></div>
+    <div class="nut f"><h3>Błonnik</h3><p>nie jest trawiony, a pomaga jelitom</p></div>
+    <div class="card" style="display:flex;align-items:center"><p style="font-size:20px;margin:0">Kolory zostają na całą lekcję: <b>ten sam kolor = ten sam składnik</b>, także w zadaniach.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-t="Role">
+  <div class="eyebrow">Po co jemy?</div>
+  <h2>Trzy zadania pokarmu</h2>
+  <div class="roles">
+    <div class="role"><h3>Budulec</h3><p>Z tego rośniemy i naprawiamy ciało: mięśnie, kości, skórę, krew.</p><div class="chips"><span class="chip b">białka</span><span class="chip s">sole mineralne</span><span class="chip h">woda</span></div></div>
+    <div class="role"><h3>Energia</h3><p>Paliwo do ruchu, myślenia, oddychania i utrzymania temperatury ciała.</p><div class="chips"><span class="chip c">cukry</span><span class="chip t">tłuszcze</span><span class="chip b">białka</span></div></div>
+    <div class="role"><h3>Regulacja</h3><p>Dbają, żeby wszystkie procesy w ciele przebiegały prawidłowo.</p><div class="chips"><span class="chip w">witaminy</span><span class="chip s">sole mineralne</span><span class="chip h">woda</span></div></div>
+  </div>
+</section>
+
+<section class="slide" data-t="Białka">
+  <span class="tag b" style="align-self:flex-start">Białka</span>
+  <h2>Białka: <span class="hl">budulec ciała</span></h2>
+  <div class="two">
+    <div>
+      <ul class="dots">
+        <li>Zbudowane z mniejszych cegiełek: <b>aminokwasów</b>.</li>
+        <li>Budują mięśnie, skórę, włosy, paznokcie.</li>
+        <li>Tworzą enzymy i przeciwciała, które bronią przed chorobami.</li>
+        <li>Niedobór: wolniejszy wzrost, słabsza odporność.</li>
+      </ul>
+    </div>
+    <div><div class="foods"><div class="food" data-f="egg">jaja</div><div class="food" data-f="cheese">ser, mleko</div><div class="food" data-f="fish">ryby, mięso</div><div class="food" data-f="beans">fasola, soczewica</div><div class="food" data-f="nuts">orzechy</div><div class="food" data-f="yogurt">jogurt</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-t="Cukry">
+  <span class="tag c" style="align-self:flex-start">Cukry (węglowodany)</span>
+  <h2>Cukry: <span class="hl">główne źródło energii</span></h2>
+  <div class="two">
+    <div>
+      <ul class="dots">
+        <li><b>Cukry proste</b>, np. glukoza i fruktoza: słodkie, w owocach i miodzie.</li>
+        <li><b>Cukry złożone</b>, np. skrobia: w pieczywie, ziemniakach, kaszach i makaronie.</li>
+        <li>Glukoza to najważniejsze paliwo dla mózgu i mięśni.</li>
+        <li>Celuloza też jest cukrem złożonym. To błonnik, o nim później.</li>
+      </ul>
+    </div>
+    <div><div class="foods"><div class="food" data-f="bread">pieczywo</div><div class="food" data-f="potato">ziemniaki</div><div class="food" data-f="pasta">makaron, kasza</div><div class="food" data-f="apple">owoce</div><div class="food" data-f="honey">miód</div><div class="food" data-f="rice">ryż</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-t="Tłuszcze">
+  <span class="tag t" style="align-self:flex-start">Tłuszcze</span>
+  <h2>Tłuszcze: <span class="hl">zapas energii</span></h2>
+  <div class="two">
+    <div>
+      <ul class="dots">
+        <li>Z 1 grama tłuszczu jest <b>ponad 2 razy więcej energii</b> niż z 1 grama białek czy cukrów.</li>
+        <li>Chronią narządy i zatrzymują ciepło w ciele.</li>
+        <li>Bez nich nie wchłoniemy witamin <b>A, D, E, K</b>.</li>
+        <li>Najzdrowsze są oleje roślinne, orzechy i tłuste ryby.</li>
+      </ul>
+    </div>
+    <div><div class="foods"><div class="food" data-f="oil">olej, oliwa</div><div class="food" data-f="butter">masło</div><div class="food" data-f="nuts">orzechy</div><div class="food" data-f="fish">tłuste ryby</div><div class="food" data-f="avocado">awokado</div><div class="food" data-f="cheese">ser żółty</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-t="Skrobia">
+  <div class="eyebrow">Doświadczenie przy kamerze</div>
+  <h2>Gdzie się ukrywa <span class="hl">skrobia?</span></h2>
+  <div class="two even">
+    <div>
+      <ol class="steps">
+        <li>Połóż na talerzyku: plasterek ziemniaka, kawałek chleba, ser, jabłko i kilka ziarenek ryżu.</li>
+        <li>Na każdy produkt kapnij jodyną (robi to dorosły).</li>
+        <li>Obserwuj kolor przez minutę.</li>
+      </ol>
+      <p class="src">Granatowy albo prawie czarny kolor = <b>w produkcie jest skrobia</b>.</p>
+    </div>
+    <div>
+      <div class="card"><p style="margin:0 0 8px;font-size:22px"><b>Typowy wynik</b></p>
+      <div class="res"><div class="yes">ziemniak<br>granatowy</div><div class="yes">chleb<br>granatowy</div><div class="yes">ryż<br>granatowy</div><div>ser<br>brązowy</div><div>jabłko<br>brązowy*</div><div>olej<br>brązowy</div></div>
+      <p class="muted" style="font-size:17px;margin:10px 0 0">* niedojrzałe jabłko może lekko zgranatowieć: ma jeszcze skrobię, która w dojrzałym zmienia się w cukry proste.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="Tłuszcz">
+  <div class="eyebrow">Doświadczenie przy kamerze</div>
+  <h2>Test <span class="hl">tłustej plamy</span></h2>
+  <div class="two even">
+    <div>
+      <ol class="steps">
+        <li>Na kartce narysuj 4 kółka i podpisz: woda, olej, orzech, jabłko.</li>
+        <li>Każdym produktem potrzyj papier w jego kółku.</li>
+        <li>Odczekaj 10 minut i popatrz na kartkę pod światło.</li>
+      </ol>
+      <p class="src">Woda wyparowała. <b>Plama, która prześwieca i nie znika, to tłuszcz.</b></p>
+    </div>
+    <div class="card" style="text-align:center"><svg viewBox="0 0 260 180" width="100%" aria-hidden="true"><rect x="10" y="10" width="240" height="160" rx="6" fill="#fff" stroke="#18261d" stroke-width="3"/><g font-family="Lexend, Arial" font-size="14" fill="#56655a" text-anchor="middle"><text x="70" y="78">woda</text><text x="190" y="78">olej</text><text x="70" y="160">orzech</text><text x="190" y="160">jabłko</text></g><circle cx="70" cy="50" r="22" fill="none" stroke="#cfdccf" stroke-width="2" stroke-dasharray="4 4"/><circle cx="190" cy="50" r="22" fill="#f1e6a8" stroke="#d6c46a" stroke-width="2"/><circle cx="70" cy="132" r="22" fill="#f6edc0" stroke="#d6c46a" stroke-width="2"/><circle cx="190" cy="132" r="22" fill="none" stroke="#cfdccf" stroke-width="2" stroke-dasharray="4 4"/></svg></div>
+  </div>
+</section>
+
+<section class="slide" data-t="Witaminy">
+  <span class="tag w" style="align-self:flex-start">Witaminy</span>
+  <h2>Witaminy: <span class="hl">mało, ale koniecznie</span></h2>
+  <p style="margin:-10px 0 14px;font-size:22px">Rozpuszczają się w tłuszczach: <b>A, D, E, K</b>. Rozpuszczają się w wodzie: <b>B, C</b>.</p>
+  <table>
+    <tr><th>Witamina</th><th>Gdzie jej szukać</th><th>Do czego służy</th><th>Gdy jej brakuje</th></tr>
+    <tr><td>A</td><td>marchew, masło, jaja, mleko</td><td>wzrok, skóra</td><td>kurza ślepota (słabe widzenie o zmroku)</td></tr>
+    <tr><td>D</td><td>tłuste ryby, jaja; powstaje w skórze w słońcu</td><td>mocne kości i zęby</td><td>krzywica (miękkie, wygięte kości)</td></tr>
+    <tr><td>C</td><td>papryka, natka, czarna porzeczka, cytrusy, kiszonki</td><td>odporność, gojenie się ran</td><td>szkorbut, częste infekcje</td></tr>
+    <tr><td>K</td><td>zielone warzywa liściaste, brokuł</td><td>krzepnięcie krwi</td><td>krwawienia, łatwe siniaki</td></tr>
+    <tr><td>B</td><td>pełne ziarna, kasze, mięso, jaja, strączki</td><td>układ nerwowy, krew</td><td>zmęczenie, zaburzenia nerwowe, anemia</td></tr>
+  </table>
+</section>
+
+<section class="slide" data-t="Sole mineralne">
+  <span class="tag s" style="align-self:flex-start">Sole mineralne</span>
+  <h2>Sole mineralne: <span class="hl">pierwiastki z talerza</span></h2>
+  <table>
+    <tr><th>Pierwiastek</th><th>Gdzie go szukać</th><th>Do czego służy</th><th>Gdy go brakuje</th></tr>
+    <tr><td>Ca</td><td>mleko, jogurt, sery</td><td>kości i zęby</td><td>łamliwe kości</td></tr>
+    <tr><td>Fe</td><td>mięso, jaja, kasza gryczana, strączki</td><td>hemoglobina przenosi tlen</td><td>anemia: bladość, zmęczenie</td></tr>
+    <tr><td>I</td><td>sól jodowana, ryby morskie</td><td>hormony tarczycy</td><td>wole (powiększona tarczyca)</td></tr>
+    <tr><td>F</td><td>pasta do zębów, herbata, ryby</td><td>twarde szkliwo zębów</td><td>próchnica</td></tr>
+    <tr><td>Mg</td><td>kakao, orzechy, kasze</td><td>mięśnie i nerwy</td><td>skurcze mięśni</td></tr>
+  </table>
+  <p style="font-size:20px;margin:12px 0 0" class="muted">Sód (Na) z soli kuchennej też jest potrzebny, ale zwykle jemy go za dużo. Nadmiar soli szkodzi sercu i podnosi ciśnienie.</p>
+</section>
+
+<section class="slide" data-t="Woda">
+  <span class="tag h" style="align-self:flex-start">Woda</span>
+  <div class="two">
+    <div>
+      <div class="bignum">60–70%</div>
+      <p class="big" style="margin-top:10px">masy Twojego ciała to woda. U dzieci jest jej więcej niż u dorosłych.</p>
+    </div>
+    <div>
+      <ul class="dots">
+        <li>Rozpuszcza substancje: w wodzie zachodzą procesy życiowe.</li>
+        <li>Krew, w większości wodą, rozprowadza składniki po ciele.</li>
+        <li>Pot chłodzi ciało w upale i przy wysiłku.</li>
+        <li>Z moczem usuwamy zbędne substancje.</li>
+        <li>Pij kilka szklanek dziennie, więcej w upał i przy sporcie.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="Błonnik">
+  <span class="tag f" style="align-self:flex-start">Błonnik</span>
+  <h2>Błonnik: <span class="hl">miotła dla jelit</span></h2>
+  <div class="two">
+    <div>
+      <ul class="dots">
+        <li>Nasz organizm go <b>nie trawi</b>, więc nie daje nam energii.</li>
+        <li>Pęcznieje w wodzie i pobudza jelita do pracy (to perystaltyka), więc chroni przed zaparciami.</li>
+        <li>Na dłużej daje uczucie sytości.</li>
+        <li>Jest pożywką dla pożytecznych bakterii w jelitach.</li>
+      </ul>
+    </div>
+    <div><div class="foods"><div class="food" data-f="bread2">pełnoziarniste pieczywo</div><div class="food" data-f="pasta">kasze</div><div class="food" data-f="beans">strączki</div><div class="food" data-f="apple">owoce ze skórką</div><div class="food" data-f="carrot">warzywa</div><div class="food" data-f="oats">płatki owsiane</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-t="Owoce i warzywa">
+  <div class="eyebrow">Owoce i warzywa</div>
+  <h2>Jedz <span class="hl">kolorowo</span></h2>
+  <p style="margin:-14px 0 16px;font-size:22px">Każdy kolor to trochę inne witaminy i sole mineralne. W owocach i warzywach są też błonnik i woda, dlatego warto je jeść codziennie, przy każdym posiłku.</p>
+  <div class="rainbow">
+    <div class="rb" style="background:#c8453b"><h3>czerwone</h3><p>pomidor, papryka, truskawki</p></div>
+    <div class="rb" style="background:#e07b14"><h3>pomarańczowe</h3><p>marchew, dynia, morela</p></div>
+    <div class="rb" style="background:#2f8f4e"><h3>zielone</h3><p>brokuł, szpinak, groszek</p></div>
+    <div class="rb" style="background:#5b3f8f"><h3>fioletowe</h3><p>borówki, śliwki, czerwona kapusta</p></div>
+    <div class="rb" style="background:#efe7d6;color:#18261d"><h3>białe</h3><p>kalafior, cebula, czosnek</p></div>
+  </div>
+</section>
+
+<section class="slide" data-t="Talerz">
+  <div class="eyebrow">Jak to złożyć w posiłek?</div>
+  <h2>Talerz <span class="hl">zdrowego żywienia</span></h2>
+  <div class="two even">
+    <div id="plate2"></div>
+    <div>
+      <ul class="dots">
+        <li><b>Połowa talerza:</b> warzywa i owoce, więcej warzyw.</li>
+        <li><b>Ćwierć:</b> produkty zbożowe, najlepiej pełnoziarniste.</li>
+        <li><b>Ćwierć:</b> produkty białkowe: ryby, jaja, strączki, mięso, nabiał.</li>
+        <li>Do picia woda. Tłuszcze roślinne w małej ilości.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="Na wynos">
+  <div class="eyebrow">Podsumowanie</div>
+  <h2>3 zdania <span class="hl">na wynos</span></h2>
+  <div class="takes">
+    <div><b style="color:var(--bialka)">Białka</b> budują ciało, <b style="color:var(--cukry)">cukry</b> i <b style="color:var(--tluszcze)">tłuszcze</b> dają energię.</div>
+    <div><b style="color:var(--witaminy)">Witaminy</b> i <b style="color:var(--sole)">sole mineralne</b> regulują pracę organizmu, a ich brak powoduje choroby.</div>
+    <div><b style="color:var(--blonnik)">Błonnik</b> z warzyw, owoców i pełnych ziaren pomaga jelitom pracować.</div>
+  </div>
+  <p style="margin-top:22px"><a class="btn" href="index.html">Przejdź do zadań →</a></p>
+</section>
+
+</div></div>
+
+<nav class="bar" aria-label="Sterowanie prezentacją">
+  <button type="button" id="prev" aria-label="Poprzedni slajd">←</button>
+  <span class="ct" id="ct">1 / 1</span>
+  <button type="button" id="next" aria-label="Następny slajd">→</button>
+  <div class="prog" aria-hidden="true"><i id="prog"></i></div>
+  <button type="button" id="fs">Pełny ekran</button>
+  <a href="index.html">Zadania</a>
+</nav>
+
+<script>
+/* ilustracje produktów */
+const S=(c)=>`<svg viewBox="0 0 120 90" aria-hidden="true">${c}</svg>`;
+const K='#18261d';
+const FOOD={
+ egg:S(`<ellipse cx="48" cy="50" rx="22" ry="28" fill="#fbf3e4" stroke="${K}" stroke-width="3"/><ellipse cx="82" cy="58" rx="20" ry="16" fill="#fff" stroke="${K}" stroke-width="3"/><circle cx="82" cy="58" r="8" fill="#f2b632"/>`),
+ cheese:S(`<path d="M22 60 L90 30 L100 60Z" fill="#f6cf4a" stroke="${K}" stroke-width="3" stroke-linejoin="round"/><path d="M22 60 H100 V74 H22Z" fill="#f2c233" stroke="${K}" stroke-width="3"/><circle cx="50" cy="66" r="4" fill="#d9a417"/><circle cx="78" cy="50" r="4" fill="#d9a417"/>`),
+ fish:S(`<path d="M18 46 C38 22 76 22 92 46 C76 70 38 70 18 46Z" fill="#9cc3dc" stroke="${K}" stroke-width="3"/><path d="M92 46 L110 30 V62Z" fill="#9cc3dc" stroke="${K}" stroke-width="3" stroke-linejoin="round"/><circle cx="34" cy="42" r="3" fill="${K}"/>`),
+ beans:S(`${[[40,40],[60,52],[78,38],[50,62],[72,64]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="11" ry="7" fill="#a33b2b" stroke="${K}" stroke-width="2" transform="rotate(-20 ${x} ${y})"/>`).join('')}`),
+ nuts:S(`<path d="M36 30 C56 26 62 56 46 66 C30 74 18 56 26 42Z" fill="#b5835a" stroke="${K}" stroke-width="3"/><path d="M70 34 C90 30 98 60 82 70 C66 76 56 60 62 46Z" fill="#c69468" stroke="${K}" stroke-width="3"/><path d="M38 40 q8 10 2 20 M74 44 q8 10 2 20" stroke="${K}" stroke-width="2" fill="none"/>`),
+ yogurt:S(`<path d="M34 30 H86 L80 78 H40Z" fill="#fff" stroke="${K}" stroke-width="3" stroke-linejoin="round"/><rect x="30" y="22" width="60" height="10" rx="3" fill="#c8453b"/><path d="M42 50 H78" stroke="#cfdccf" stroke-width="6"/>`),
+ bread:S(`<path d="M24 44 C24 26 96 26 96 44 C96 52 90 52 90 52 V76 H30 V52 C30 52 24 52 24 44Z" fill="#e0b070" stroke="${K}" stroke-width="3" stroke-linejoin="round"/><path d="M36 50 V70 H84 V50" fill="#f6e2b8"/>`),
+ bread2:S(`<path d="M24 44 C24 26 96 26 96 44 C96 52 90 52 90 52 V76 H30 V52 C30 52 24 52 24 44Z" fill="#a8743d" stroke="${K}" stroke-width="3" stroke-linejoin="round"/><path d="M36 50 V70 H84 V50" fill="#d9b98a"/><g fill="#6b4a22">${[[44,56],[58,62],[70,54],[50,66],[76,66]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2"/>`).join('')}</g>`),
+ potato:S(`<path d="M24 50 C22 30 58 24 80 30 C102 36 102 62 82 70 C60 78 26 72 24 50Z" fill="#d6a965" stroke="${K}" stroke-width="3"/><g fill="#9c7136"><circle cx="46" cy="44" r="2.5"/><circle cx="70" cy="56" r="2.5"/><circle cx="82" cy="42" r="2"/></g>`),
+ pasta:S(`<path d="M24 50 H96 C96 70 80 80 60 80 C40 80 24 70 24 50Z" fill="#fff" stroke="${K}" stroke-width="3"/><g stroke="#e3b64a" stroke-width="5" stroke-linecap="round" fill="none"><path d="M36 50 q10 -16 20 0"/><path d="M52 48 q10 -18 22 -2"/><path d="M66 50 q8 -14 18 0"/></g>`),
+ rice:S(`<path d="M24 50 H96 C96 70 80 80 60 80 C40 80 24 70 24 50Z" fill="#fff" stroke="${K}" stroke-width="3"/><path d="M32 50 C40 34 80 34 88 50Z" fill="#f4f1e8" stroke="${K}" stroke-width="2"/>`),
+ apple:S(`<path d="M60 30 C40 20 22 34 26 54 C30 74 48 82 60 74 C72 82 90 74 94 54 C98 34 80 20 60 30Z" fill="#d84a3b" stroke="${K}" stroke-width="3"/><path d="M60 30 q2 -12 10 -16" stroke="${K}" stroke-width="3" fill="none"/><path d="M64 22 q12 -8 18 2 q-10 6 -18 -2Z" fill="#2f8f4e"/>`),
+ honey:S(`<path d="M36 34 H84 V76 a6 6 0 0 1 -6 6 H42 a6 6 0 0 1 -6 -6Z" fill="#f2b632" stroke="${K}" stroke-width="3"/><rect x="32" y="22" width="56" height="12" rx="3" fill="#8a6a3f" stroke="${K}" stroke-width="2"/><rect x="44" y="46" width="32" height="20" rx="3" fill="#fff6d6"/>`),
+ oil:S(`<path d="M50 14 H70 V28 L80 40 V80 H40 V40 L50 28Z" fill="#f6df72" stroke="${K}" stroke-width="3" stroke-linejoin="round"/><rect x="48" y="8" width="24" height="8" rx="2" fill="#2f8f4e"/><rect x="46" y="52" width="28" height="16" rx="2" fill="#fff"/>`),
+ butter:S(`<path d="M26 50 L70 36 L98 46 L54 62Z" fill="#fbe9a0" stroke="${K}" stroke-width="3" stroke-linejoin="round"/><path d="M26 50 V64 L54 76 V62Z" fill="#f4d975" stroke="${K}" stroke-width="3" stroke-linejoin="round"/><path d="M54 62 V76 L98 60 V46Z" fill="#efce5c" stroke="${K}" stroke-width="3" stroke-linejoin="round"/>`),
+ avocado:S(`<path d="M60 14 C78 14 92 50 88 66 C84 80 36 80 32 66 C28 50 42 14 60 14Z" fill="#5b8a2e" stroke="${K}" stroke-width="3"/><path d="M60 22 C72 22 82 52 79 64 C76 74 44 74 41 64 C38 52 48 22 60 22Z" fill="#d8e6a0"/><circle cx="60" cy="58" r="11" fill="#8a5a33"/>`),
+ lemon:S(`<ellipse cx="60" cy="46" rx="34" ry="24" fill="#f6d63a" stroke="${K}" stroke-width="3"/><path d="M26 46 l-8 -4 M94 46 l8 4" stroke="${K}" stroke-width="3"/>`),
+ pepper:S(`<path d="M40 30 C20 34 22 78 44 78 C52 78 54 72 60 72 C66 72 68 78 76 78 C98 78 100 34 80 30 C72 28 66 32 60 32 C54 32 48 28 40 30Z" fill="#d43a2c" stroke="${K}" stroke-width="3"/><path d="M60 32 V18 q4 -6 10 -4" stroke="#2f8f4e" stroke-width="5" fill="none"/>`),
+ cabbage:S(`<path d="M34 34 H86 V76 a6 6 0 0 1 -6 6 H40 a6 6 0 0 1 -6 -6Z" fill="#eef0d8" stroke="${K}" stroke-width="3"/><rect x="30" y="22" width="60" height="12" rx="3" fill="#a0a8b8" stroke="${K}" stroke-width="2"/><g stroke="#b7b84e" stroke-width="3" fill="none"><path d="M40 46 q20 6 40 0"/><path d="M40 56 q20 6 40 0"/><path d="M40 66 q20 6 40 0"/></g>`),
+ carrot:S(`<path d="M30 70 L84 30 C92 26 98 34 92 40 L38 78 C32 82 26 76 30 70Z" fill="#e07b14" stroke="${K}" stroke-width="3" stroke-linejoin="round"/><path d="M90 32 l10 -14 M94 36 l16 -6 M88 30 l2 -18" stroke="#2f8f4e" stroke-width="4" stroke-linecap="round"/>`),
+ oats:S(`<path d="M24 50 H96 C96 70 80 80 60 80 C40 80 24 70 24 50Z" fill="#fff" stroke="${K}" stroke-width="3"/><g fill="#d8c08a" stroke="#a88a4a">${[[40,46],[52,42],[64,46],[76,42],[46,52],[60,52],[72,52],[84,48]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="6" ry="4"/>`).join('')}</g>`)
+};
+document.querySelectorAll('.food[data-f]').forEach(el=>{el.insertAdjacentHTML('afterbegin',FOOD[el.dataset.f]||'')});
+
+/* talerz */
+function plate(labels){
+  const seg=(a0,a1,r,c)=>{const p=(a)=>[140+r*Math.cos(a),140+r*Math.sin(a)];const [x0,y0]=p(a0),[x1,y1]=p(a1);return `<path d="M140 140 L${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${a1-a0>Math.PI?1:0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}Z" fill="${c}" stroke="#fff" stroke-width="4"/>`};
+  const P=Math.PI;
+  return `<svg viewBox="0 0 320 290" width="100%" role="img" aria-label="Talerz: połowa warzywa i owoce, ćwierć produkty zbożowe, ćwierć produkty białkowe"><circle cx="140" cy="140" r="132" fill="#fff" stroke="${K}" stroke-width="3"/><circle cx="140" cy="140" r="118" fill="none" stroke="#cfdccf" stroke-width="2"/>${seg(P/2,P*1.5,108,'#2f8f4e')}${seg(-P/2,0,108,'#d38f00')}${seg(0,P/2,108,'#c8453b')}${labels?`<g font-family="Lexend, Arial" font-size="15" fill="#fff" text-anchor="middle" font-weight="600"><text x="88" y="136">warzywa</text><text x="88" y="155">i owoce</text><text x="182" y="105">zboża</text><text x="182" y="186">białko</text></g>`:''}<g transform="translate(286 224)"><path d="M0 0 h22 l-3 50 h-16z" fill="#cfe8f6" stroke="${K}" stroke-width="2.5"/></g>${labels?`<text x="297" y="216" font-family="Lexend, Arial" font-size="13" fill="#56655a" text-anchor="middle">woda</text>`:''}</svg>`;
+}
+document.getElementById('plate1').innerHTML=plate(false);
+document.getElementById('plate2').innerHTML=plate(true);
+
+/* sterowanie */
+const slides=[...document.querySelectorAll('.slide')];let cur=0;
+slides.forEach((s,i)=>s.insertAdjacentHTML('beforeend',`<div class="foot">${i+1} / ${slides.length}</div>`));
+function show(i){cur=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,k)=>s.classList.toggle('on',k===cur));document.getElementById('ct').textContent=`${cur+1} / ${slides.length}`;document.getElementById('prog').style.width=((cur+1)/slides.length*100)+'%';try{history.replaceState(null,'','#slajd-'+(cur+1))}catch(e){location.hash='slajd-'+(cur+1)}}
+function fit(){const st=document.getElementById('stage');const s=Math.min(st.clientWidth/1280,st.clientHeight/720)*0.98;document.getElementById('deck').style.transform=`scale(${s})`}
+window.addEventListener('resize',fit);fit();
+document.getElementById('prev').onclick=()=>show(cur-1);
+document.getElementById('next').onclick=()=>show(cur+1);
+document.addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();show(cur+1)}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();show(cur-1)}else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1)});
+document.getElementById('stage').addEventListener('click',e=>{if(e.target.closest('a,button'))return;const x=e.clientX/window.innerWidth;show(x<0.3?cur-1:cur+1)});
+let tx=null;document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50){show(dx<0?cur+1:cur-1)}tx=null},{passive:true});
+document.getElementById('fs').onclick=()=>{const d=document.documentElement;try{if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else{(d.requestFullscreen||d.webkitRequestFullscreen).call(d)}}catch(e){}};
+const fromHash=()=>{const m=location.hash.match(/^#slajd-(\d+)$/);return m?+m[1]-1:0};window.addEventListener('hashchange',()=>show(fromHash()));show(fromHash());
+</script>
+</body>
+</html>
